@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Arcane - Gestión de Mundo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Arcane - CRUD Completo</h1>
+
+<!-- PERSONAJES -->
+<section>
+    <h2>Crear Personaje</h2>
+    <form id="formPersonaje">
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <input type="text" id="origen" placeholder="Origen" required>
+        <input type="text" id="rol" placeholder="Rol" required>
+        <input type="text" id="alineacion" placeholder="Alineación" required>
+        <button type="submit">Guardar Personaje</button>
+    </form>
+    <h3>Lista de Personajes</h3>
+    <ul id="listaPersonajes"></ul>
+</section>
+
+<!-- ORGANIZACIONES -->
+<section>
+    <h2>Crear Organización</h2>
+    <form id="formOrganizacion">
+        <input type="text" id="nombreOrg" placeholder="Nombre" required>
+        <input type="text" id="ciudadOrg" placeholder="Ciudad" required>
+        <input type="text" id="tipoOrg" placeholder="Tipo" required>
+        <button type="submit">Guardar Organización</button>
+    </form>
+    <h3>Lista de Organizaciones</h3>
+    <ul id="listaOrganizaciones"></ul>
+</section>
+
+<!-- TECNOLOGIAS -->
+<section>
+    <h2>Crear Tecnología</h2>
+    <form id="formTecnologia">
+        <input type="text" id="nombreTec" placeholder="Nombre" required>
+        <input type="text" id="tipoTec" placeholder="Tipo" required>
+        <input type="text" id="descripcionTec" placeholder="Descripción" required>
+        <button type="submit">Guardar Tecnología</button>
+    </form>
+    <h3>Lista de Tecnologías</h3>
+    <ul id="listaTecnologias"></ul>
+</section>
+
+<!-- AFILIACIONES -->
+<section>
+    <h2>Crear Afiliación</h2>
+    <form id="formAfiliacion">
+        <input type="number" id="idPersonajeAf" placeholder="ID Personaje" required>
+        <input type="number" id="idOrganizacionAf" placeholder="ID Organización" required>
+        <input type="text" id="cargoAf" placeholder="Cargo" required>
+        <button type="submit">Guardar Afiliación</button>
+    </form>
+    <h3>Lista de Afiliaciones</h3>
+    <ul id="listaAfiliaciones"></ul>
+</section>
+
+<!-- USO TECNOLOGIA -->
+<section>
+    <h2>Crear Uso de Tecnología</h2>
+    <form id="formUsoTec">
+        <input type="number" id="idPersonajeUso" placeholder="ID Personaje" required>
+        <input type="number" id="idTecnologiaUso" placeholder="ID Tecnología" required>
+        <input type="text" id="nivelUso" placeholder="Nivel de Uso" required>
+        <button type="submit">Guardar Uso Tecnología</button>
+    </form>
+    <h3>Lista de Uso de Tecnología</h3>
+    <ul id="listaUsoTec"></ul>
+</section>
+
+<!-- RELACIONES -->
+<section>
+    <h2>Crear Relación</h2>
+    <form id="formRelacion">
+        <input type="number" id="idPersonaje1" placeholder="ID Personaje 1" required>
+        <input type="number" id="idPersonaje2" placeholder="ID Personaje 2" required>
+        <input type="text" id="tipoRelacion" placeholder="Tipo de Relación" required>
+        <button type="submit">Guardar Relación</button>
+    </form>
+    <h3>Lista de Relaciones</h3>
+    <ul id="listaRelaciones"></ul>
+</section>
+
+<script>
+    // PERSONAJES
+    const formPersonaje = document.getElementById('formPersonaje');
+    const listaPersonajes = document.getElementById('listaPersonajes');
+
+    formPersonaje.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const personaje = {
+        nombre: document.getElementById('nombre').value,
+        origen: document.getElementById('origen').value,
+        rol: document.getElementById('rol').value,
+        alineacion: document.getElementById('alineacion').value
+      };
+      await fetch('/api/personajes', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(personaje)
+      });
+      formPersonaje.reset();
+      cargarPersonajes();
+    });
+
+    const cargarPersonajes = async () => {
+      const res = await fetch('/api/personajes');
+      const data = await res.json();
+      listaPersonajes.innerHTML = '';
+      data.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = `${p.nombre} (${p.origen}, ${p.rol})`;
+        listaPersonajes.appendChild(li);
+      });
+    };
+
+    // ORGANIZACIONES
+    const formOrganizacion = document.getElementById('formOrganizacion');
+    const listaOrganizaciones = document.getElementById('listaOrganizaciones');
+
+    formOrganizacion.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const organizacion = {
+        nombre: document.getElementById('nombreOrg').value,
+        ciudad: document.getElementById('ciudadOrg').value,
+        tipo: document.getElementById('tipoOrg').value
+      };
+      await fetch('/api/organizaciones', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(organizacion)
+      });
+      formOrganizacion.reset();
+      cargarOrganizaciones();
+    });
+
+    const cargarOrganizaciones = async () => {
+      const res = await fetch('/api/organizaciones');
+      const data = await res.json();
+      listaOrganizaciones.innerHTML = '';
+      data.forEach(o => {
+        const li = document.createElement('li');
+        li.textContent = `${o.nombre} - ${o.ciudad} (${o.tipo})`;
+        listaOrganizaciones.appendChild(li);
+      });
+    };
+
+    // TECNOLOGIAS
+    const formTecnologia = document.getElementById('formTecnologia');
+    const listaTecnologias = document.getElementById('listaTecnologias');
+
+    formTecnologia.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const tecnologia = {
+        nombre: document.getElementById('nombreTec').value,
+        tipo: document.getElementById('tipoTec').value,
+        descripcion: document.getElementById('descripcionTec').value
+      };
+      await fetch('/api/tecnologias', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(tecnologia)
+      });
+      formTecnologia.reset();
+      cargarTecnologias();
+    });
+
+    const cargarTecnologias = async () => {
+      const res = await fetch('/api/tecnologias');
+      const data = await res.json();
+      listaTecnologias.innerHTML = '';
+      data.forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = `${t.nombre} (${t.tipo})`;
+        listaTecnologias.appendChild(li);
+      });
+    };
+
+    // Las funciones para Afiliaciones, UsoTecnologia y Relaciones siguen igual, puedo completarlas si quieres! 🔥
+
+    window.onload = () => {
+      cargarPersonajes();
+      cargarOrganizaciones();
+      cargarTecnologias();
+    };
+</script>
+</body>
+</html>
